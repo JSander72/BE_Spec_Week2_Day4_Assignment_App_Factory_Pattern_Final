@@ -1,18 +1,14 @@
-from marshmallow import Schema, fields
+from app.models import ServiceTicket
+from app.extensions import ma
 
 
-class ServiceTicketSchema(Schema):
-    id = fields.Int(dump_only=True)
-    name = fields.Str(required=True)
-    expertise = fields.Str(required=True)
-    years_of_experience = fields.Int(required=True)
 
-class CreateServiceTicketSchema(Schema):
-    name = fields.Str(required=True)
-    expertise = fields.Str(required=True)
-    years_of_experience = fields.Int(required=True)
+class ServiceTicketschema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ServiceTicket
+        include_fk = True
 
-class UpdateServiceTicketSchema(Schema):
-    name = fields.Str()
-    expertise = fields.Str()
-    years_of_experience = fields.Int()
+serviceTicket_schema = ServiceTicketschema()
+input_serviceTicket_schema = ServiceTicketschema(exclude=['service_date', 'mechanics'])
+serviceTicket_schema = ServiceTicketschema(many=True)
+

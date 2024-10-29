@@ -1,17 +1,11 @@
-from marshmallow import Schema, fields
+from app.extensions import ma
+from app.models import Customer
 
-class CustomerSchema(Schema):
-    id = fields.Int(dump_only=True)
-    name = fields.Str(required=True)
-    expertise = fields.Str(required=True)
-    years_of_experience = fields.Int(required=True)
+class Customerschema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Customer
+        include_fk = True
 
-class CreateCustomerSchema(Schema):
-    name = fields.Str(required=True)
-    expertise = fields.Str(required=True)
-    years_of_experience = fields.Int(required=True)
-
-class UpdateCustomerSchema(Schema):
-    name = fields.Str()
-    expertise = fields.Str()
-    years_of_experience = fields.Int()
+customer_schema = Customerschema()
+input_customer_schema = Customerschema()
+customer_schema = Customerschema(many=True)

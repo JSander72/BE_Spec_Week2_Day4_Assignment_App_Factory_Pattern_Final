@@ -1,17 +1,13 @@
-from marshmallow import Schema, fields
+from app.models import Mechanic
+from app.extensions import ma
 
-class MechanicSchema(Schema):
-    id = fields.Int(dump_only=True)
-    name = fields.Str(required=True)
-    expertise = fields.Str(required=True)
-    years_of_experience = fields.Int(required=True)
 
-class CreateMechanicSchema(Schema):
-    name = fields.Str(required=True)
-    expertise = fields.Str(required=True)
-    years_of_experience = fields.Int(required=True)
 
-class UpdateMechanicSchema(Schema):
-    name = fields.Str()
-    expertise = fields.Str()
-    years_of_experience = fields.Int()
+class Mechanicschema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Mechanic
+        include_fk = True
+
+mechanics_schema = Mechanicschema()
+# input_mechanics_schema = Mechanicschema()
+mechanics_schema = Mechanicschema(many=True)
