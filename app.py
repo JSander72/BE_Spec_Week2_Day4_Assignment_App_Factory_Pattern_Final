@@ -1,8 +1,5 @@
-from app import create_app, db, ma
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from dotenv import load_dotenv
+from app import create_app
+from app.models import db
 
 app = create_app('DevelopmentConfig')
 

@@ -1,12 +1,15 @@
-# import os
-# from flask_sqlalchemy import SQLAlchemy
+import os
 
-# class DevelopmentConfig:
-#     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mechanic.db'
-#     DEBUG = True
 
-# class TestingConfig:
-#     pass
+database_url = os.getenv('DATABASE_URL', 'sqlite:///mechanic.db')
 
-# class ProductionConfig:
-#     pass
+class DevelopmentConfig:    
+    SQLALCHEMY_DATABASE_URI = database_url
+    DEBUG = True
+    CACHE_TYPE = 'SimpleCache'
+
+class TestingConfig:
+    pass
+
+class ProductionConfig:
+    pass
