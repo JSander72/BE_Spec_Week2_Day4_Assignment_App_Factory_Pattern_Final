@@ -1,3 +1,3 @@
 from flask import Blueprint
 
-serviceTicket_bp = Blueprint('serviceTickets_bp', __name__)
+serviceTicket_bp = Blueprint('serviceTicket_bp', __name__)

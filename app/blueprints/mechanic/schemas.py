@@ -3,11 +3,10 @@ from app.extensions import ma
 
 
 
-class Mechanicschema(ma.SQLAlchemyAutoSchema):
+class MechanicSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanic
         include_fk = True
 
-mechanics_schema = Mechanicschema()
-# input_mechanics_schema = Mechanicschema()
-mechanics_schema = Mechanicschema(many=True)
+mechanics_schema = MechanicSchema()
+mechanics_schema = MechanicSchema(many=True)

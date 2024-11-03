@@ -1,11 +1,13 @@
-from app.extensions import ma
 from app.models import Customer
+from app.extensions import ma
+from marshmallow import fields
+
 
 class Customerschema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Customer
-        include_fk = True
+    serviceTickets = fields.Nested("ServiceTicketSchema", many=True)
 
 customer_schema = Customerschema()
-input_customer_schema = Customerschema()
-customer_schema = Customerschema(many=True)
+customers_schema = Customerschema(many=True)
+login_schema = Customerschema(exclude=["phone", "name", "role"])
