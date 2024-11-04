@@ -1,25 +1,28 @@
 
 from flask import Blueprint, request, jsonify
-from .schemas import mechanic_schema, mechanics_schema
+from .schemas import mechanic_schema, mechanics_schema, login_mechanic_schema
 from marshmallow import ValidationError
 from app.models import Mechanic, db
 from sqlalchemy import select
-from app.extensions import Limiter, Cache
+# from app.extensions import Limiter, Cache
+from flask_limiter import Limiter
 from app.blueprints.mechanic import mechanic_bp 
-from app.utils.auth import admin_required
+from app.utils.util import encode_token, token_required, admin_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 mechanic_bp = Blueprint('mechanic', __name__)
 
 # CREATE Mechanic
 @mechanic_bp.route("/", methods=['POST'])
-@admin_required
+# @admin_required # turn on after initial creation 
 def create_mechanic():
     try:
         mechanic_data = mechanic_schema.load(request.json)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
+    pwhash = generate_password_hash(mechanic_data['password'])
     new_mechanic = Mechanic(
         name=mechanic_data['name'],
         email=mechanic_data['email'],
@@ -111,3 +114,25 @@ def search_mechanic():
     mechanics = db.session.execute(query).scalars().all()
 
     return mechanics_schema.jsonify(mechanics), 200
+
+@mechanic_bp.route("/login", methods=['POST'])
+def login():
+    try:
+        creds = login_mechanic_schema.load(request.json)
+
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    query = select(mechanic).where(mechanic.email == creds['email'])
+    mechanic = db.session.execute(query).scalars().first()
+
+    if mechanic and check_password_hash(mechanic.password, creds['password']):
+        token = encode_token(mechanic.id)
+
+        response = {
+            "message": " You're are logged in",
+            "status": "Success",
+            "token": token
+        }
+    
+    return jsonify(response), 200

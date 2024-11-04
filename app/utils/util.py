@@ -4,25 +4,22 @@ from datetime import datetime, timedelta, timezone
 from functools import wraps
 import os
 
-SECRET_KEY = os.environ.get('SECRET_KEY') #Secret kept secret in my .env, used to mint my tokens
+SECRET_KEY = os.environ.get('SECRET_KEY') 
 
-#creates a token using a customers id
-def encode_token(customer_id, role):
+#create a token 
+def encode_token(customer_id):
     payload = {
-        'exp': datetime.now(timezone.utc) + timedelta(days = 0, hours= 1), #adding expriation to token 1 hour after now
-        'iat': datetime.now(timezone.utc), #Issued at iat
-        'sub': customer_id, #Sub == subject of the token
-        'role': role
+        'exp': datetime.now(timezone.utc) + timedelta(days = 0, hours= 3), 
+        'iat': datetime.now(timezone.utc), 
+        'sub': customer_id,         
     }
 
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token
 
-
-#token reuiqred decorated
 def token_required(func):
     @wraps(func)
-    def wrapper(*args, **kwargs): #Taking in args and kwargs needed for the decorated function
+    def wrapper(*args, **kwargs):
         token = None
 
         if 'Authorization' in request.headers:
@@ -35,17 +32,17 @@ def token_required(func):
                 return jsonify({'message': "Token has expired"}), 401
             except jwt.InvalidTokenError:
                 return jsonify({"message": "Invalid Token"}), 401
-            return func(token_user=payload['sub'],*args, **kwargs) #executing the function that is being decorated
+            return func(token_user=payload['sub'],*args, **kwargs) 
         else:
             return jsonify({"messages": "Token Authorization Required"}), 401
         
     return wrapper
 
 
-#admin_required wrapper
+# admin_required wrapper
 def admin_required(func):
     @wraps(func)
-    def wrapper(*args, **kwargs): #Taking in args and kwargs needed for the decorated function
+    def wrapper(*args, **kwargs): 
         token = None
 
         if 'Authorization' in request.headers:

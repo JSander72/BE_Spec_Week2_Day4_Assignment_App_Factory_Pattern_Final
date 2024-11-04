@@ -1,7 +1,8 @@
 import os
 
 
-database_url = os.getenv('DATABASE_URL')
+
+database_url = 'sqlite:///mechanic.db'
 
 class DevelopmentConfig:    
     SQLALCHEMY_DATABASE_URI = database_url

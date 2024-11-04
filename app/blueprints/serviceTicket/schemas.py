@@ -3,12 +3,12 @@ from app.extensions import ma
 
 
 
-class ServiceTicketschema(ma.SQLAlchemyAutoSchema):
+class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ServiceTicket
         include_fk = True
 
-serviceTicket_schema = ServiceTicketschema()
-input_serviceTicket_schema = ServiceTicketschema(exclude=['service_date', 'mechanics'])
-serviceTicket_schema = ServiceTicketschema(many=True)
+serviceTicket_schema = ServiceTicketSchema()
+# input_serviceTicket_schema = ServiceTicketSchema(exclude=['service_date', 'mechanics'])
+serviceTicket_schema = ServiceTicketSchema(many=True)
 
