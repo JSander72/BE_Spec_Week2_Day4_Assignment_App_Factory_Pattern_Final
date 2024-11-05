@@ -9,6 +9,7 @@ class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
 
 serviceTicket_schema = ServiceTicketSchema()
+serviceTickets_schema = ServiceTicketSchema(many=True)
 # input_serviceTicket_schema = ServiceTicketSchema(exclude=['service_date', 'mechanics'])
-serviceTicket_schema = ServiceTicketSchema(many=True)
+
 

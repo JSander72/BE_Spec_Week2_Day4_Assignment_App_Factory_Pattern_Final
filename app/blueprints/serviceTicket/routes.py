@@ -1,11 +1,11 @@
 from app.blueprints import serviceTicket
-from .schemas import ServiceTicketSchema, ServiceTicketsSchema
+from .schemas import ServiceTicketSchema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from app.models import ServiceTicket, db
 from sqlalchemy import select
 from datetime import date, datetime
-from app.extensions import Limiter, Cache
+# from app.extensions import Limiter, Cache
 from app.utils.util import admin_required
 
 

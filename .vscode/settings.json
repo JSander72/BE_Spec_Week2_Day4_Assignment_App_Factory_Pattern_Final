@@ -5,6 +5,7 @@
         "jsonify",
         "Mechanicschema",
         "pwhash",
+        "Sansio",
         "sqlalchemy",
         "werkzeug"
     ],

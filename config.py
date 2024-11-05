@@ -1,7 +1,5 @@
 import os
 
-
-
 database_url = 'sqlite:///mechanic.db'
 
 class DevelopmentConfig:    

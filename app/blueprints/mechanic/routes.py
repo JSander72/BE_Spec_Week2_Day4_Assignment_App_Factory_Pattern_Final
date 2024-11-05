@@ -1,15 +1,12 @@
-
 from flask import Blueprint, request, jsonify
 from .schemas import mechanic_schema, mechanics_schema, login_mechanic_schema
 from marshmallow import ValidationError
 from app.models import Mechanic, db
 from sqlalchemy import select
-# from app.extensions import Limiter, Cache
-from flask_limiter import Limiter
-from app.blueprints.mechanic import mechanic_bp 
+# from flask import current_app
 from app.utils.util import encode_token, token_required, admin_required
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from app.extensions import limiter  # Import the limiter instance
 
 mechanic_bp = Blueprint('mechanic', __name__)
 
@@ -36,7 +33,7 @@ def create_mechanic():
 
 # RETRIEVE Mechanics
 @mechanic_bp.route("/", methods=["GET"])
-@Limiter.limit("10 per hour")
+@limiter.limit("10 per hour")  # Use the imported limiter instance
 def get_mechanics():
     print("GETTING MECHANICS")
     page = request.args.get("page")
