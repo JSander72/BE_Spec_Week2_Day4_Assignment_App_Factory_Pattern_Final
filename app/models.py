@@ -25,6 +25,7 @@ class Customer(Base):
     name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     email: Mapped[str] = mapped_column(db.String(200), nullable=False, unique=True)
     phone: Mapped[str] = mapped_column(db.String(20))
+    password: Mapped[str] = mapped_column(db.String(20), nullable=False)
 
     # One-to-Many
     serviceTickets: Mapped[List['ServiceTicket']] = relationship(back_populates='customer')

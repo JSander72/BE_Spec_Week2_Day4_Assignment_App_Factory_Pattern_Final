@@ -11,8 +11,12 @@ customer_bp = customer.customer_bp
 @customer_bp.route("/", methods=['POST'])
 def create_customer():
     try: 
-        customer_data = customer_schema.load(request.json) 
+        customer_data = request.json
+        print(f"Received customer data: {customer_data}")
+        customer_data = customer_schema.load(customer_data) 
+        print(f"Validated customer data: {customer_data}")
     except ValidationError as e:
+        print(f"Validation Error: {e.messages}")
         return jsonify(e.messages), 400
     
     pwhash = generate_password_hash(customer_data['password'])
@@ -49,6 +53,7 @@ def update_customer(customer_id):
     try:
         customer_data = customer_schema.load(request.json)
     except ValidationError as e:
+        print(f"Validation Error: {e.messages}")
         return jsonify(e.messages), 400
     
     for field, value in customer_data.items():
