@@ -31,7 +31,7 @@ def create_customer():
 def get_customers():
     query = select(Customer)
     customers = db.session.execute(query).scalars().all()
-
+    
     return customers_schema.jsonify(customer), 200
 
 
