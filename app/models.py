@@ -15,7 +15,7 @@ service_mechanics = db.Table(
     "service_mechanics",
     Base.metadata,
     Column("ticket_id", db.ForeignKey("serviceTickets.id")),
-    Column("mechanic_id", db.ForeignKey("mechanics.id"))
+    Column("mechanics_id", db.ForeignKey("mechanics.id"))
 )
 
 class Customer(Base):
@@ -38,6 +38,7 @@ class ServiceTicket(Base):
     service_date: Mapped[date] = mapped_column(nullable=False)
     service_desc: Mapped[str] = mapped_column(db.String(100), nullable=False)
     customer_id: Mapped[int] = mapped_column(db.ForeignKey('customers.id'))
+    
 
     # Many-to-One
     customer: Mapped['Customer'] = relationship(back_populates='serviceTickets')

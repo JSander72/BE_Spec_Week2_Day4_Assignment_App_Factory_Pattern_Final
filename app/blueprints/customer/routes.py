@@ -27,12 +27,12 @@ def create_customer():
     return jsonify("Customer has been added our database."), 201
 
 
-@customer_bp.route("/", methods=['GET'])
+@customer_bp.route("/all", methods=['GET'])
 def get_customers():
     query = select(Customer)
     customers = db.session.execute(query).scalars().all()
     
-    return customers_schema.jsonify(customer), 200
+    return customers_schema.jsonify(customers), 200
 
 
 @customer_bp.route("/<int:customer_id>", methods=['GET'])

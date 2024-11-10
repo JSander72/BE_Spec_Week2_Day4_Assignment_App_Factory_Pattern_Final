@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash
 
 mechanic_bp = mechanic.mechanic_bp
 
-@mechanic_bp.route("/", methods=['POST'])
+@mechanic_bp.route("/create", methods=['POST'])
 def create_mechanic():
     try:
         mechanic_data = request.json
