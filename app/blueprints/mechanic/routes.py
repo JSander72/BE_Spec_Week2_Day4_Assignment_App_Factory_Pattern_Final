@@ -36,21 +36,17 @@ def create_mechanic():
 def login_mechanic():
     try:
         data = request.get_json()
-        print(f"Received data: {data}")  # Print the received data
         email = data.get('email')
         password = data.get('password')
         
         mechanic = Mechanic.query.filter_by(email=email).first()
-        print(f"Found mechanic: {mechanic}")  # Print the retrieved mechanic
 
         if not mechanic or not check_password_hash(mechanic.password, password):
             return jsonify({'message': 'Invalid credentials'}), 401
         
-        token = encode_token(mechanic.id)  # Generate JWT token
-        print(f"Generated token: {token}")  # Print the generated token
+        token = encode_token(mechanic.id)
         return jsonify({'token': token, 'message': 'Login successful'}), 200
     except Exception as e:
-        print(f"Error: {e}")  # Print the exception
         return jsonify({'message': 'An error occurred'}), 500
 
 @mechanic_bp.route("/", methods=['GET'])
@@ -103,8 +99,6 @@ def delete_mechanic(mechanic_id):
 
 @mechanic_bp.route("/<int:mechanic_id>/tickets", methods=['GET'])
 def get_mechanic_tickets(mechanic_id):
-    """Get all service tickets associated with a mechanic."""
-
     mechanic = db.session.get(Mechanic, mechanic_id)
     if mechanic is None:
         abort(404, description=f"Mechanic with ID {mechanic_id} not found.")

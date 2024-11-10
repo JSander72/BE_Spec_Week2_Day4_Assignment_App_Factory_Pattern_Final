@@ -19,8 +19,8 @@ def create_new_serviceTicket():
     except ValidationError as e:
         return jsonify(e.messages), 400
 
-    mechanic_ids = serviceTicket_data.mechanics  # Use 'mechanics' instead of 'mechanic_ids'
-    serviceTicket_data.mechanics = []  # Clear the existing list
+    mechanic_ids = serviceTicket_data.mechanics  
+    serviceTicket_data.mechanics = []  
 
     for mechanic_id in mechanic_ids: 
         mechanic = Mechanic.query.get(mechanic_id)
@@ -33,31 +33,6 @@ def create_new_serviceTicket():
     db.session.commit()
 
     return jsonify("New service ticket has been added to our database."), 201
-
-    # Create a new service ticket instance
-    serviceTicket = ServiceTicket(
-        customer_id=customer_id,
-        service_date=date.today(),
-        service_desc="Service description"
-    )
-    serviceTicket.mechanics = []
-
-    # Attach mechanics based on mechanic_ids
-    for mechanic_id in mechanic_ids:
-        mechanic = Mechanic.query.get(mechanic_id)
-        if mechanic:
-            serviceTicket.mechanics.append(mechanic)
-        else:
-            print(f"Error: Mechanic with ID {mechanic_id} not found.")
-            return jsonify({"error": f"Mechanic with ID {mechanic_id} not found."}), 400
-
-    # Save to the database
-    db.session.add(serviceTicket)
-    db.session.commit()
-
-    print("New service ticket has been added to our database.")
-    return jsonify("New service ticket has been added to our database."), 201
-
 
 @serviceTicket_bp.route("/all", methods=['GET'])
 def get_all_serviceTickets():

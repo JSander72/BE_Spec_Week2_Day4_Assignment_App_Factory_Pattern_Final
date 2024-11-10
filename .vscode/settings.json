@@ -5,8 +5,10 @@
         "jsonify",
         "Mechanicschema",
         "pwhash",
+        "restx",
         "Sansio",
         "sqlalchemy",
+        "swaggerui",
         "werkzeug"
     ],
     "python.testing.unittestArgs": [
