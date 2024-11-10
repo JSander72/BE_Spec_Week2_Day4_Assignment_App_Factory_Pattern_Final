@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from app.models import Mechanic, db
 from sqlalchemy import select
 from app.utils.util import encode_token, token_required
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 mechanic_bp = mechanic.mechanic_bp
 
@@ -32,6 +32,26 @@ def create_mechanic():
 
     return jsonify("Mechanic has been added to our database."), 201
 
+@mechanic_bp.route("/login", methods=['POST'])
+def login_mechanic():
+    try:
+        data = request.get_json()
+        print(f"Received data: {data}")  # Print the received data
+        email = data.get('email')
+        password = data.get('password')
+        
+        mechanic = Mechanic.query.filter_by(email=email).first()
+        print(f"Found mechanic: {mechanic}")  # Print the retrieved mechanic
+
+        if not mechanic or not check_password_hash(mechanic.password, password):
+            return jsonify({'message': 'Invalid credentials'}), 401
+        
+        token = encode_token(mechanic.id)  # Generate JWT token
+        print(f"Generated token: {token}")  # Print the generated token
+        return jsonify({'token': token, 'message': 'Login successful'}), 200
+    except Exception as e:
+        print(f"Error: {e}")  # Print the exception
+        return jsonify({'message': 'An error occurred'}), 500
 
 @mechanic_bp.route("/", methods=['GET'])
 def get_mechanics():
@@ -39,7 +59,6 @@ def get_mechanics():
     mechanics = db.session.execute(query).scalars().all()
 
     return mechanics_schema.jsonify(mechanics), 200
-
 
 @mechanic_bp.route("/<int:mechanic_id>", methods=['GET'])
 def get_mechanic(mechanic_id):
@@ -49,7 +68,6 @@ def get_mechanic(mechanic_id):
         abort(404, description=f"Mechanic with ID {mechanic_id} not found.")
 
     return mechanic_schema.jsonify(mechanic), 200
-
 
 @mechanic_bp.route("/<int:mechanic_id>", methods=['PUT'])
 @token_required
@@ -71,7 +89,6 @@ def update_mechanic(mechanic_id):
     db.session.commit()
     return mechanic_schema.jsonify(mechanic), 200
 
-
 @mechanic_bp.route("/<int:mechanic_id>", methods=['DELETE'])
 @token_required
 def delete_mechanic(mechanic_id):
@@ -84,7 +101,6 @@ def delete_mechanic(mechanic_id):
     db.session.commit()
     return jsonify({"message": f"Mechanic with ID {mechanic_id} has been deleted."}), 200
 
-
 @mechanic_bp.route("/<int:mechanic_id>/tickets", methods=['GET'])
 def get_mechanic_tickets(mechanic_id):
     """Get all service tickets associated with a mechanic."""
@@ -96,3 +112,47 @@ def get_mechanic_tickets(mechanic_id):
     tickets = mechanic.serviceTickets  
 
     return serviceTickets_schema.jsonify(tickets), 200
+
+@mechanic_bp.route("/<int:mechanic_id>/tickets/<int:ticket_id>", methods=['PUT'])
+@token_required
+def update_service_ticket(mechanic_id, ticket_id):
+    mechanic = db.session.get(Mechanic, mechanic_id)
+    if mechanic is None:
+        abort(404, description=f"Mechanic with ID {mechanic_id} not found.")
+
+    if mechanic.role != 'admin':
+        return jsonify({"message": "Admin role required"}), 403
+
+    ticket = next((t for t in mechanic.serviceTickets if t.id == ticket_id), None)
+    if ticket is None:
+        abort(404, description=f"Service ticket with ID {ticket_id} not found.")
+
+    try:
+        ticket_data = serviceTickets_schema.load(request.json, partial=True)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+
+    for field, value in ticket_data.items():
+        if value:
+            setattr(ticket, field, value)
+
+    db.session.commit()
+    return serviceTickets_schema.jsonify(ticket), 200
+
+@mechanic_bp.route("/<int:mechanic_id>/tickets/<int:ticket_id>", methods=['DELETE'])
+@token_required
+def delete_service_ticket(mechanic_id, ticket_id):
+    mechanic = db.session.get(Mechanic, mechanic_id)
+    if mechanic is None:
+        abort(404, description=f"Mechanic with ID {mechanic_id} not found.")
+
+    if mechanic.role != 'admin':
+        return jsonify({"message": "Admin role required"}), 403
+
+    ticket = next((t for t in mechanic.serviceTickets if t.id == ticket_id), None)
+    if ticket is None:
+        abort(404, description=f"Service ticket with ID {ticket_id} not found.")
+
+    db.session.delete(ticket)
+    db.session.commit()
+    return jsonify({"message": f"Service ticket with ID {ticket_id} has been deleted."}), 200

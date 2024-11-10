@@ -57,3 +57,6 @@ class Mechanic(Base):
     role: Mapped[str] = mapped_column(db.String(20), nullable=False)
 
     serviceTickets: Mapped[List['ServiceTicket']] = relationship(secondary=service_mechanics, back_populates='mechanics')
+
+    # Add query attribute
+    query = db.session.query_property()
