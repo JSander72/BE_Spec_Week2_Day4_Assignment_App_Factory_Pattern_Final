@@ -31,7 +31,7 @@ def token_required(f):
         if 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
             try:
-                token = auth_header.split(' ')[1]  # Get token from "Bearer <token>"
+                token = auth_header.split(' ')[1]  
             except IndexError:
                 return jsonify({'message': 'Token is missing'}), 401
         if not token:
@@ -39,7 +39,7 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-            current_mechanic = data['sub']  # Assuming 'sub' holds the mechanic ID
+            current_mechanic = data['sub']  
         except jwt.ExpiredSignatureError:
             return jsonify({'message': 'Token has expired'}), 401
         except jwt.InvalidTokenError:
@@ -66,7 +66,7 @@ def admin_required(func):
                 return jsonify({"message": "Invalid Token"}), 401
 
             if payload['role'] == 'admin':
-                return func(*args, **kwargs)  # Executing the function that is being decorated
+                return func(*args, **kwargs)  
             else:
                 return jsonify({"messages": "Admin Authorization Required"}), 401
         else:

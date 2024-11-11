@@ -10,7 +10,6 @@ if __name__ == '__main__':
         db.create_all()
 
     with app.app_context():
-        # Your code that uses current_app.extensions['limiter'].limit("10 per hour")
         pass
 
     app.run(debug=True)
